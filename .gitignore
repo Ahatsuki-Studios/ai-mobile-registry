@@ -1,0 +1,9 @@
+# Never commit secrets or weights
+*.pem
+*.key
+*.gguf
+*.bin
+*.ggml
+.env
+secrets/
+staging/
