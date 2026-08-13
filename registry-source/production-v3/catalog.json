@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 3,
+  "models": [
+    {
+      "modelId": "minicpm-v-4.6-r1",
+      "modelGroupId": "minicpm-v",
+      "revisionSequence": 1,
+      "displayName": "MiniCPM-V 4.6",
+      "family": "MiniCPM-V",
+      "version": "4.6",
+      "lifecycleStatus": "ACTIVE",
+      "publisher": "OpenBMB",
+      "capabilities": [
+        "text_generation",
+        "image_understanding",
+        "multimodal"
+      ],
+      "inputTypes": [
+        "TEXT",
+        "IMAGE"
+      ],
+      "outputTypes": [
+        "TEXT"
+      ],
+      "artifacts": [
+        {
+          "artifactId": "minicpm-v-4_6-q4_k_m",
+          "role": "PRIMARY_MODEL",
+          "format": "GGUF",
+          "quantization": "Q4_K_M",
+          "sourceFileName": "MiniCPM-V-4_6-Q4_K_M.gguf",
+          "fileSizeBytes": 529101504,
+          "checksum": {
+            "algorithm": "SHA_256",
+            "hexValue": "6b0c74962c44bc6bf4b655b9b02c13eda9d5a0491543ae976d1ac18e4b7892e2"
+          },
+          "memoryEstimate": {
+            "estimatedMinRamBytes": 4294967296,
+            "estimatedRecommendedRamBytes": 6442450944,
+            "sourceNote": "OpenBMB MiniCPM-V-Apps README hardware table for MiniCPM-V 4.6 (Q4_K_M LLM + mmproj-f16): recommended device RAM ≥ 6 GB. Metadata estimate only; not a runtime or benchmark claim.",
+            "evidenceKind": "AI_MOBILE_ESTIMATE"
+          },
+          "downloadUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.6-gguf/resolve/78e02f066e9819a60573b78a4275df8a0c27f698/MiniCPM-V-4_6-Q4_K_M.gguf",
+          "provenance": {
+            "kind": "OFFICIAL_QUANTIZED"
+          }
+        },
+        {
+          "artifactId": "minicpm-v-4_6-mmproj-f16",
+          "role": "AUXILIARY",
+          "format": "GGUF",
+          "quantization": "F16",
+          "sourceFileName": "mmproj-model-f16.gguf",
+          "fileSizeBytes": 1108746944,
+          "checksum": {
+            "algorithm": "SHA_256",
+            "hexValue": "ca931d861d0801d9003e50697cd764721a334107c0e0415a51168ee1938462de"
+          },
+          "memoryEstimate": {
+            "estimatedMinRamBytes": 4294967296,
+            "estimatedRecommendedRamBytes": 6442450944,
+            "sourceNote": "Shared with primary artifact: OpenBMB MiniCPM-V-Apps recommends ≥ 6 GB device RAM for the full MiniCPM-V 4.6 GGUF set (LLM + mmproj). Estimate only.",
+            "evidenceKind": "AI_MOBILE_ESTIMATE"
+          },
+          "downloadUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.6-gguf/resolve/78e02f066e9819a60573b78a4275df8a0c27f698/mmproj-model-f16.gguf",
+          "provenance": {
+            "kind": "OFFICIAL_QUANTIZED"
+          }
+        }
+      ],
+      "executionBindings": [
+        {
+          "bindingId": "legacy-v2-default",
+          "runtimeFamilyId": "llama-cpp-omni",
+          "runtimeContractMin": 1,
+          "formatProfile": "gguf-primary-mmproj",
+          "catalogSupport": "SUPPORTED",
+          "installPolicy": "AUTO_ALLOWED",
+          "artifactRequirements": [
+            {
+              "artifactId": "minicpm-v-4_6-q4_k_m",
+              "requirement": "REQUIRED"
+            },
+            {
+              "artifactId": "minicpm-v-4_6-mmproj-f16",
+              "requirement": "REQUIRED"
+            }
+          ],
+          "backendHints": [
+            "CPU"
+          ],
+          "priority": 100
+        }
+      ],
+      "source": {
+        "publisherName": "OpenBMB",
+        "referenceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.6-gguf",
+        "revisionReference": "78e02f066e9819a60573b78a4275df8a0c27f698",
+        "verificationStatus": "OFFICIAL_SOURCE_CONFIRMED"
+      },
+      "license": {
+        "name": "Apache-2.0",
+        "referenceUrl": "https://github.com/OpenBMB/MiniCPM-V/blob/main/LICENSE",
+        "commercialUse": "ALLOWED",
+        "redistribution": "ALLOWED"
+      }
+    }
+  ]
+}

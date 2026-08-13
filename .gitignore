@@ -7,3 +7,14 @@
 .env
 secrets/
 staging/
+
+# Local operator / test signing outputs (never public feed path)
+*.envelope.json
+generated-candidates/test-keys/
+
+# Unsigned generated catalog payloads are LOCAL BUILD OUTPUT only.
+# GitHub Pages serves this repo from branch main at path "/" (repository root),
+# so committing these files would make them web-reachable after push.
+# Authoring SSoT remains registry-source/; regenerate via registry-prepare.
+generated-candidates/**
+!generated-candidates/README.md
