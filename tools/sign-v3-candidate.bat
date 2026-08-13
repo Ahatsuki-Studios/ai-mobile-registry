@@ -1,13 +1,13 @@
 @echo off
-REM M5.2b helper template: production-sign generated candidate via args file.
-REM Does NOT embed passphrase. Private key path is EXTERNAL.
-REM Safe for Windows paths containing spaces.
+REM M5.2b production signing wrapper.
+REM 1) Gradle builds/installs the standalone registry-sign distribution (no signing).
+REM 2) The installDist Windows launcher is invoked DIRECTLY from this cmd.exe process
+REM    so System.console() works for the encrypted PKCS#8 passphrase prompt.
+REM Passphrase: interactive hidden console only. Never CLI/env/args-file/Git.
 setlocal EnableExtensions
-set "SCRIPT_DIR=%~dp0"
-set "REGISTRY_ROOT=%SCRIPT_DIR%.."
-for %%I in ("%REGISTRY_ROOT%") do set "REGISTRY_ROOT=%%~fI"
-set "APP_ANDROID=%REGISTRY_ROOT%\..\ai-mobile\android-app"
-for %%I in ("%APP_ANDROID%") do set "APP_ANDROID=%%~fI"
+call "%~dp0_resolve-sibling-paths.bat"
+call "%~dp0_ensure-java21.bat"
+if errorlevel 1 exit /b %ERRORLEVEL%
 
 if "%~1"=="" (
   echo Usage: sign-v3-candidate.bat ^<external-private-key.pem^> ^<public-key.pem^> [generatedAtEpochMillis]
@@ -15,6 +15,7 @@ if "%~1"=="" (
   echo Payload default: generated-candidates\m5.2a-production-v3-catalog.json
   echo Out default:     %%TEMP%%\catalog-schema-v3-current.json
   echo.
+  echo Build uses Gradle installDist. Signing runs outside Gradle JavaExec.
   echo After PASS, operator copies signed envelope to v1\catalog-schema-v3\current.json
   exit /b 2
 )
@@ -27,6 +28,14 @@ if "%GENERATED_AT%"=="" set "GENERATED_AT=0"
 set "PAYLOAD=%REGISTRY_ROOT%\generated-candidates\m5.2a-production-v3-catalog.json"
 set "OUT=%TEMP%\catalog-schema-v3-current.json"
 set "ARGS_FILE=%TEMP%\aimobile-registry-sign-args.txt"
+
+echo Registry root:   %REGISTRY_ROOT%
+echo Workspace root:  %WORKSPACE_ROOT%
+echo AI Mobile root:  %AI_MOBILE_ROOT%
+echo Android app:     %APP_ANDROID%
+echo Signer launcher: %SIGNER_LAUNCHER%
+echo Payload:         %PAYLOAD%
+echo Out:             %OUT%
 
 if not exist "%PAYLOAD%" (
   echo ERROR: payload missing. Run prepare-v3-candidate.bat first: %PAYLOAD%
@@ -42,6 +51,20 @@ if not exist "%PUBLIC_KEY%" (
 )
 if not exist "%APP_ANDROID%\gradlew.bat" (
   echo ERROR: ai-mobile android-app not found at %APP_ANDROID%
+  exit /b 2
+)
+
+echo Building standalone registry-sign distribution via Gradle installDist...
+pushd "%APP_ANDROID%"
+call gradlew.bat :tools:registry-sign:installDist
+set ERR=%ERRORLEVEL%
+popd
+if not "%ERR%"=="0" (
+  echo ERROR: installDist failed.
+  exit /b %ERR%
+)
+if not exist "%SIGNER_LAUNCHER%" (
+  echo ERROR: signer launcher missing after installDist: %SIGNER_LAUNCHER%
   exit /b 2
 )
 
@@ -64,18 +87,16 @@ if not exist "%APP_ANDROID%\gradlew.bat" (
   )
 ) > "%ARGS_FILE%"
 
-echo Writing args file: %ARGS_FILE%
-echo Payload: %PAYLOAD%
-echo Out: %OUT%
 echo.
-echo M5.2b ONLY — interactive passphrase prompt may appear. Never pass passphrase via CLI/env.
-pushd "%APP_ANDROID%"
-call gradlew.bat :tools:registry-sign:run -PtoolArgsFile="%ARGS_FILE%"
+echo Args file (non-secret only): %ARGS_FILE%
+echo.
+echo Invoking signer DIRECTLY outside Gradle JavaExec.
+echo Interactive passphrase prompt should appear (hidden). Never pass passphrase via CLI/env.
+call "%SIGNER_LAUNCHER%" --args-file "%ARGS_FILE%"
 set ERR=%ERRORLEVEL%
-popd
 if not "%ERR%"=="0" exit /b %ERR%
 echo.
 echo Signed envelope at: %OUT%
-echo Next: copy to "%REGISTRY_ROOT%\v1\catalog-schema-v3\current.json" after review.
+echo Next: verify envelope, then copy to "%REGISTRY_ROOT%\v1\catalog-schema-v3\current.json"
 echo Leave v1\current.json unchanged.
 exit /b 0

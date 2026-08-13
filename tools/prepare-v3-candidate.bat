@@ -3,11 +3,10 @@ REM Offline M5.2a prepare: validate + generate unsigned v3 candidate (gitignored
 REM Does NOT production-sign. Does NOT write v1/catalog-schema-v3/current.json.
 REM Safe for Windows paths with spaces (no Gradle --args path list).
 setlocal EnableExtensions
-set "SCRIPT_DIR=%~dp0"
-set "REGISTRY_ROOT=%SCRIPT_DIR%.."
-for %%I in ("%REGISTRY_ROOT%") do set "REGISTRY_ROOT=%%~fI"
-set "APP_ANDROID=%REGISTRY_ROOT%\..\ai-mobile\android-app"
-for %%I in ("%APP_ANDROID%") do set "APP_ANDROID=%%~fI"
+call "%~dp0_resolve-sibling-paths.bat"
+echo Registry root:  %REGISTRY_ROOT%
+echo AI Mobile root: %AI_MOBILE_ROOT%
+echo Android app:    %APP_ANDROID%
 if not exist "%APP_ANDROID%\gradlew.bat" (
   echo ERROR: ai-mobile android-app not found at %APP_ANDROID%
   exit /b 2
