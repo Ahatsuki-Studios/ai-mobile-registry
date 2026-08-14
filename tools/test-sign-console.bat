@@ -101,8 +101,21 @@ echo ============================================================
 echo.
 call "%SIGNER_LAUNCHER%" --args-file "%ARGS_FILE%"
 set ERR=%ERRORLEVEL%
-if not "%ERR%"=="0" exit /b %ERR%
+if not "%ERR%"=="0" (
+  echo ERROR: test signer exited with code %ERR%. No envelope accepted.
+  exit /b %ERR%
+)
+if not exist "%OUT%" (
+  echo ERROR: test signer exit 0 but output missing: %OUT%
+  exit /b 1
+)
+for %%F in ("%OUT%") do set "OUT_SIZE=%%~zF"
+if "%OUT_SIZE%"=="" set "OUT_SIZE=0"
+if %OUT_SIZE% LEQ 0 (
+  echo ERROR: test signer exit 0 but output empty: %OUT%
+  exit /b 1
+)
 echo.
-echo Test envelope: %OUT%
+echo Test envelope: %OUT% ^(size=%OUT_SIZE%^)
 echo Expected: self-verification=PASS above.
 exit /b 0

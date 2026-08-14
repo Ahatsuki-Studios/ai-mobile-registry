@@ -10,10 +10,11 @@ call "%~dp0_ensure-java21.bat"
 if errorlevel 1 exit /b %ERRORLEVEL%
 
 if "%~1"=="" (
-  echo Usage: sign-v3-candidate.bat ^<external-private-key.pem^> ^<public-key.pem^> [generatedAtEpochMillis]
+  echo Usage: sign-v3-candidate.bat ^<external-private-key.pem^> ^<public-key.pem^> [generatedAtEpochMillis] [registryVersion]
   echo.
   echo Payload default: generated-candidates\m5.2a-production-v3-catalog.json
   echo Out default:     %%TEMP%%\catalog-schema-v3-current.json
+  echo registryVersion: required positive integer ^(4th arg^). No silent default.
   echo.
   echo Build uses Gradle installDist. Signing runs outside Gradle JavaExec.
   echo After PASS, operator copies signed envelope to v1\catalog-schema-v3\current.json
@@ -23,7 +24,13 @@ if "%~1"=="" (
 set "PRIVATE_KEY=%~1"
 set "PUBLIC_KEY=%~2"
 set "GENERATED_AT=%~3"
+set "REGISTRY_VERSION=%~4"
 if "%GENERATED_AT%"=="" set "GENERATED_AT=0"
+if "%REGISTRY_VERSION%"=="" (
+  echo ERROR: registryVersion ^(4th argument^) is required and must be a positive integer.
+  echo Example: sign-v3-candidate.bat key.pem pub.pem 0 2
+  exit /b 2
+)
 
 set "PAYLOAD=%REGISTRY_ROOT%\generated-candidates\m5.2a-production-v3-catalog.json"
 set "OUT=%TEMP%\catalog-schema-v3-current.json"
@@ -36,6 +43,7 @@ echo Android app:     %APP_ANDROID%
 echo Signer launcher: %SIGNER_LAUNCHER%
 echo Payload:         %PAYLOAD%
 echo Out:             %OUT%
+echo registryVersion: %REGISTRY_VERSION%
 
 if not exist "%PAYLOAD%" (
   echo ERROR: payload missing. Run prepare-v3-candidate.bat first: %PAYLOAD%
@@ -68,11 +76,15 @@ if not exist "%SIGNER_LAUNCHER%" (
   exit /b 2
 )
 
+REM Re-assert JDK 21+ after Gradle ^(in case the daemon mutated PATH/JAVA_HOME^).
+call "%~dp0_ensure-java21.bat"
+if errorlevel 1 exit /b %ERRORLEVEL%
+
 (
   echo --payload
   echo %PAYLOAD%
   echo --registry-version
-  echo 1
+  echo %REGISTRY_VERSION%
   echo --key-id
   echo aimobile-registry-2026-01
   echo --private-key
@@ -94,9 +106,22 @@ echo Invoking signer DIRECTLY outside Gradle JavaExec.
 echo Interactive passphrase prompt should appear (hidden). Never pass passphrase via CLI/env.
 call "%SIGNER_LAUNCHER%" --args-file "%ARGS_FILE%"
 set ERR=%ERRORLEVEL%
-if not "%ERR%"=="0" exit /b %ERR%
+if not "%ERR%"=="0" (
+  echo ERROR: signer exited with code %ERR%. No signed envelope accepted.
+  exit /b %ERR%
+)
+if not exist "%OUT%" (
+  echo ERROR: signer exit 0 but output file missing: %OUT%
+  exit /b 1
+)
+for %%F in ("%OUT%") do set "OUT_SIZE=%%~zF"
+if "%OUT_SIZE%"=="" set "OUT_SIZE=0"
+if %OUT_SIZE% LEQ 0 (
+  echo ERROR: signer exit 0 but output file empty: %OUT%
+  exit /b 1
+)
 echo.
-echo Signed envelope at: %OUT%
+echo Signed envelope at: %OUT% ^(size=%OUT_SIZE%^)
 echo Next: verify envelope, then copy to "%REGISTRY_ROOT%\v1\catalog-schema-v3\current.json"
 echo Leave v1\current.json unchanged.
 exit /b 0
