@@ -104,6 +104,81 @@
         "commercialUse": "ALLOWED",
         "redistribution": "ALLOWED"
       }
+    },
+    {
+      "modelId": "qwen3-0.6b-r1",
+      "modelGroupId": "qwen3-text",
+      "revisionSequence": 1,
+      "displayName": "Qwen3 0.6B",
+      "family": "Qwen3",
+      "version": "0.6B",
+      "lifecycleStatus": "ACTIVE",
+      "publisher": "Qwen",
+      "capabilities": [
+        "text_generation"
+      ],
+      "inputTypes": [
+        "TEXT"
+      ],
+      "outputTypes": [
+        "TEXT"
+      ],
+      "artifacts": [
+        {
+          "artifactId": "qwen3-0.6b-q8_0",
+          "role": "PRIMARY_MODEL",
+          "format": "GGUF",
+          "quantization": "Q8_0",
+          "sourceFileName": "Qwen3-0.6B-Q8_0.gguf",
+          "fileSizeBytes": 639446688,
+          "checksum": {
+            "algorithm": "SHA_256",
+            "hexValue": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031"
+          },
+          "memoryEstimate": {
+            "estimatedMinRamBytes": 2147483648,
+            "estimatedRecommendedRamBytes": 3221225472,
+            "sourceNote": "M6.1 preliminary/conservative estimate for Qwen3-0.6B Q8_0 PRIMARY-only (artifact ~610 MiB). Confidence LOW; not a measured working-set or broad-device claim. Xiaomi physical PASS does not imply universal recommendation.",
+            "evidenceKind": "AI_MOBILE_ESTIMATE"
+          },
+          "downloadUrl": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+          "provenance": {
+            "kind": "OFFICIAL_QUANTIZED"
+          }
+        }
+      ],
+      "executionBindings": [
+        {
+          "bindingId": "llama-gguf-single-default",
+          "runtimeFamilyId": "llama-cpp-omni",
+          "runtimeContractMin": 1,
+          "formatProfile": "gguf-single",
+          "catalogSupport": "SUPPORTED",
+          "installPolicy": "AUTO_ALLOWED",
+          "artifactRequirements": [
+            {
+              "artifactId": "qwen3-0.6b-q8_0",
+              "requirement": "REQUIRED"
+            }
+          ],
+          "backendHints": [
+            "CPU"
+          ],
+          "priority": 100
+        }
+      ],
+      "source": {
+        "publisherName": "Qwen",
+        "referenceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF",
+        "revisionReference": "23749fefcc72300e3a2ad315e1317431b06b590a",
+        "verificationStatus": "OFFICIAL_SOURCE_CONFIRMED"
+      },
+      "license": {
+        "name": "Apache-2.0",
+        "referenceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/main/LICENSE",
+        "commercialUse": "ALLOWED",
+        "redistribution": "ALLOWED"
+      }
     }
   ]
 }
