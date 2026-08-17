@@ -15,3 +15,4 @@ Rules:
 - Do **not** hand-edit signed `current.json` envelopes
 - First live v3 feed is MiniCPM-only (rollout policy, not permanent schema law)
 - Leave `v1/current.json` (legacy v2) byte-unchanged until an explicit v2 republish
+- M6.4d: production v3 includes MiniCPM + Qwen3-0.6B + Whisper Base (`registryVersion=3`)

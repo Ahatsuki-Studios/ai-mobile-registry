@@ -179,6 +179,83 @@
         "commercialUse": "ALLOWED",
         "redistribution": "ALLOWED"
       }
+    },
+    {
+      "modelId": "whisper-base-r1",
+      "modelGroupId": "whisper-stt",
+      "revisionSequence": 1,
+      "displayName": "Whisper Base",
+      "family": "Whisper",
+      "version": "base",
+      "lifecycleStatus": "ACTIVE",
+      "publisher": "OpenAI",
+      "capabilities": [
+        "speech_to_text"
+      ],
+      "inputTypes": [
+        "AUDIO"
+      ],
+      "outputTypes": [
+        "TEXT"
+      ],
+      "artifacts": [
+        {
+          "artifactId": "whisper-base-ggml",
+          "role": "PRIMARY_MODEL",
+          "format": "GGML",
+          "sourceFileName": "ggml-base.bin",
+          "fileSizeBytes": 147951465,
+          "checksum": {
+            "algorithm": "SHA_256",
+            "hexValue": "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
+          },
+          "memoryEstimate": {
+            "estimatedMinRamBytes": 1073741824,
+            "estimatedRecommendedRamBytes": 2147483648,
+            "sourceNote": "M6.4d conservative estimate for Whisper Base ggml PRIMARY-only (~141 MiB). Confidence LOW; not a measured working-set or broad-device claim. Physical PASS on one device does not imply universal recommendation.",
+            "evidenceKind": "AI_MOBILE_ESTIMATE"
+          },
+          "downloadUrl": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-base.bin",
+          "provenance": {
+            "kind": "COMMUNITY_CONVERSION",
+            "converterName": "whisper.cpp / ggerganov",
+            "converterReferenceUrl": "https://huggingface.co/ggerganov/whisper.cpp",
+            "baseRevision": "5359861c739e955e79d9a303bcbc70fb988958b1"
+          }
+        }
+      ],
+      "executionBindings": [
+        {
+          "bindingId": "whisper-cpp-ggml-single-default",
+          "runtimeFamilyId": "whisper-cpp",
+          "runtimeContractMin": 1,
+          "formatProfile": "whisper-ggml-single",
+          "catalogSupport": "SUPPORTED",
+          "installPolicy": "AUTO_ALLOWED",
+          "artifactRequirements": [
+            {
+              "artifactId": "whisper-base-ggml",
+              "requirement": "REQUIRED"
+            }
+          ],
+          "backendHints": [
+            "CPU"
+          ],
+          "priority": 100
+        }
+      ],
+      "source": {
+        "publisherName": "OpenAI",
+        "referenceUrl": "https://github.com/openai/whisper",
+        "revisionReference": "5359861c739e955e79d9a303bcbc70fb988958b1",
+        "verificationStatus": "OFFICIAL_SOURCE_CONFIRMED"
+      },
+      "license": {
+        "name": "MIT",
+        "referenceUrl": "https://github.com/openai/whisper/blob/main/LICENSE",
+        "commercialUse": "ALLOWED",
+        "redistribution": "ALLOWED"
+      }
     }
   ]
 }
